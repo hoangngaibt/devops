@@ -1,0 +1,126 @@
+ cat /proc/meminfo : đây là đường dẫn (đường dẫn tuyệt đối) tới file chứa thông tin RAM có tên là meminfo
+ free [-b, -k, -m, -g, --tera, -h]
+ cat /proc/cpuinfo : Lệnh xem thông tin CPU
+ uname -a : Lệnh hiển thị thông tin kernel
+ uname -m
+ cat /etc/redhat-release : Lệnh hiển thị phiên bản Centos
+ df -h : Lệnh xem dung lượng ổ cứng
+ dmidecode -t [0...42] : Xem thông tin model, serial,… phần cứng
+ top : Lệnh xem các tiến trình
+ du : vd:du -sh /etc; Lệnh xem dung lượng của thư mục
+ hostname : Lệnh xem tên server
+ ifconfig : Lệnh xem địa chỉ ip
+ ls [-l, -a] [Path]
+ cd [Path] : 
+ pwd : cho biết thư mục hiện hành
+ passwd : đổi mật khẩu đăng nhập của user đang login.
+ cp [-R, -r] Source Dest : dùng để sao chép file
+ mv [-i, -f] Source Dest : dùng để đổi tên / di chuyển thư mục hoặc file từ nơi này sang nơi khác
+ mkdir [-p] directory : dùng để tạo thư mục
+ rmdir [-p] directory : dùng để xóa thư mục rỗng
+ rm [-f, -i, -R, -r] file : dùng để xoá file/thư mục
+ shutdown [-h, -r, -c] [now, hh:mm, +m] [wall] : 
+ reboot : 
+ init [3, 0]
+ date :  xem ngày giờ hệ thống
+ systemctl set-default multi-user.target : Thiết lập Multi-user.target mặc định khi khởi động
+ systemctl isolate multi-user.target : Từ graphical sang command mode
+ systemctl set-default graphical.target : Thiệt lập Graphical.target mặc định khi khởi động
+ systemctl isolate graphical.target : Từ command mode sang graphical
+ cat /etc/passwd : 
+ cat /etc/shadown : 
+ useradd [-c, -u, -d, -g, -G, -s] login_name : Tạo tài khoản user
+ usermod [-c, -l, -g, -G, -s, -L] login_name : Sửa thông tin tài khoản
+ userdel [-r] login_name : Xóa tài khoản user
+ chage [-l, -E, -I, -m, -M, -W] login_name :  Dùng để thiết lập các chính sách (policy) cho user
+ cat /etc/group : Là tập tin văn bản chứa thông tin về nhóm user trên máy
+ groupadd [-g] group : Tạo nhóm
+ groupmod [-g, -n] group : Sửa thông tin nhóm
+ groupdel group :  dùng để xóa nhóm
+ ls –l : Quyền truy xuất trên thư mục và tập tin được trình bày 
+ chmod [-R] Mode file : Thay đổi quyền truy xuất trên thư mục/tập tin
+ chown [-R] Owner file : Thay đổi người sở hữu thư mục/tập tin
+ chgrp [-R] Group file : Thay đổi nhóm sở hữu thư mục/tập tin
+ vi <file> : command mode sang text mode => i , a. :x hoặc :wq thoát có lưu, :q! thoát không lưu
+/etc/hosts : Dùng phân giải hostname không thể phân giải được. Có thể dùng thay DNS trong hệ thống mạng LAN
+/etc/resolves : Chỉ định DNS server để phân giải tên miền
+/etc/sysconfig/network-scripts/ifcfg-<tên card mạng> : trong thư mục này chứa thông tin cấu hình của từng card mạng.
+ ifconfig : Xem địa chỉ ip
+ ifup têncard : bật card mạng
+ ifdown têncard : tắt card mạng
+ service network restart hoặc  /etc/init.d/network restart hoăc  systemctl restart network.service  : Khởi động dịch vụ
+ route : Xem thông tin gateway
+
+ source /etc/profile.d/ant.sh : Sau đó, set cho biến môi trường này tồn tại vĩnh viễn :
+
+ ps aux | grep sshd : Check if the process sshd is running
+ netstat -plant | grep :22 : check if the process sshd is listening on port 22
+ netstat -tulnp
+ lsof -i : you can use the lsof command to check if the port 22 TCP file is open
+ telnet localhost 22 : try to telnet to port 22
+ service sshd status : check the status of the sshd service
+
+ lsblk hoac  fdisl -l hoac  df -h : phan vung o dia
+
+ hostnamectl set-hostname "elasticsearch1.linuxtechi.local" : set hostname
+  exec bash : cap nhat hostname luon
+
+mount /dev/mapper/vg_postgre-lv_postgre  /var/postgres : mount o len
+stat -c '%A %a %n' file_name   // check permission file
+last -a   // check history session ssh
+
+sed -i -e 's/\r$//' filename.sh  //change format file
+
+pwd //directory location
+
+ansible-playbook configzabiixagent.yaml -i hostsconnect.yaml --extra-vars "ansible_sudo_pass=123@123a"
+
+cat ~/.ssh/id_rsa.pub | ssh demo@198.51.100.0 "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >>  ~/.ssh/authorized_keys"
+
+sudo du -sh /var
+sudo du -sh --apparent-size /var
+sudo du -h /var/ | sort -rh | head -5
+
+sudo timedatectl set-timezone Asia/Ho_Chi_Minh
+
+Extend disk:
+echo -e "d\n 3\n n\n 3\n \n \n N\n w\n"| sudo fdisk -c /dev/sda
+hoặc
+d
+3
+n
+3
+default
+default
+N(No want to remove the signature)
+w
+
+ps -ef | egrep '(httpd|apache2|apache)' | grep -v `whoami` | grep -v root | head -n1 | awk '{print $1}'
+
+ps aux | grep -v root | grep apache | cut -d\  -f1 | sort | uniq
+
+Kiểm tra tấn công chèn script:
+
+grep -i "<script>" --color access.log
+Trích xuất IP nguồn:
+
+ awk '{print $1}' access.log
+Check mỗi IP request bao nhiều lần:
+
+  awk '{print $1}' access.log | sort | uniq -c | sort -rn
+  
+grep	Tìm các dòng chứa chuỗi được chỉ định
+awk	    Phân tách cột và tìm kiếm hàng có điều kiện
+sort	Sắp xếp dòng
+uniq	Loại bỏ các hàng trùng lặp và đếm
+wc	    Đếm số ký tự, số dòng
+sed	    Thay thế điều kiện quy định
+
+systemctl list-units --type=service --state=running 
+
+rm -rf /var/lib/apt/lists/*
+
+getent passwd {1000..60000}
+cut -d: -f1 /etc/passwd
+or
+awk -F: '{print $1}' /etc/passwd
