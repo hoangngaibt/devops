@@ -50,6 +50,18 @@
  ifdown têncard : tắt card mạng
  service network restart hoặc  /etc/init.d/network restart hoăc  systemctl restart network.service  : Khởi động dịch vụ
  route : Xem thông tin gateway
+ip link
+ip -s -h l show dev enth0
+ip a show dev enp1s0
+sudo ip a change 192.168.122.170 dev enp1s0
+ip route
+sudo ip route add default via 192.168.122.1 dev enp1s0
+nmcli device status
+nmcli con show 
+nmcli connection show enp1s0
+nslookup redhat.com
+tracepath -n sat65server
+ss
 
  source /etc/profile.d/ant.sh : Sau đó, set cho biến môi trường này tồn tại vĩnh viễn :
 
