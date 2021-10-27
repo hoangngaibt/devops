@@ -136,3 +136,23 @@ getent passwd {1000..60000}
 cut -d: -f1 /etc/passwd
 or
 awk -F: '{print $1}' /etc/passwd
+
+for f in *.yaml; do
+    sed -i '/---/i imagePullSecrets:\n        - name: registry' $f
+    sed -i 's/imagePullSecrets:/      imagePullSecrets:/g' $f
+done
+
+// delete to end file
+for f in *end.yaml; do
+    sed -i '/type: ClusterIP/,$d' $f
+done
+
+// delete to end line
+for f in *.yaml; do
+    sed -i '/memory:/d' $f
+    sed -i '/cpu:/d' $f
+    sed -i '/resources:/d' $f
+    sed -i '/limits:/d' $f
+    sed -i '/requests:/d' $f
+done
+
