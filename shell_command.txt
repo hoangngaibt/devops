@@ -156,3 +156,4 @@ for f in *.yaml; do
     sed -i '/requests:/d' $f
 done
 
+ps -ef --forest | grep nginx
