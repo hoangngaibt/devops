@@ -157,3 +157,15 @@ for f in *.yaml; do
 done
 
 ps -ef --forest | grep nginx
+
+sed -i '/point_add_delete/{n;d}' test_01.txt       #xóa 1 dòng dưới "point_add_delete"
+
+sed -i '/point_add_delete/ a /**' test_01.txt      #thêm nội dung ở dòng mới dưới "point_add_delete"
+
+sed -i "4d" test_01.txt  # xóa dòng chỉ định (VD dòng 4)
+
+sed -i '3 a /**' test_01.txt # thêm nội dung dưới dòng chỉ định ( VD thêm dưới line 3)
+
+sed -i 's/image:.*$/image:/' test.yaml  # xóa từ pattern đến hết dòng
+
+sed -i 's/image:/& 0.3/' test.yaml  #thêm vào ngay sau pattern.
