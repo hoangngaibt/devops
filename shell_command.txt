@@ -169,3 +169,5 @@ sed -i '3 a /**' test_01.txt # thêm nội dung dưới dòng chỉ định ( VD
 sed -i 's/image:.*$/image:/' test.yaml  # xóa từ pattern đến hết dòng
 
 sed -i 's/image:/& 0.3/' test.yaml  #thêm vào ngay sau pattern.
+
+sed "s/.*/$red&$default/"
