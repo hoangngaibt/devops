@@ -1,0 +1,48 @@
+image: docker:20.10.12-dind
+
+services:
+- docker:20.10.12-dind
+
+stages:
+  - Build
+  - Push
+  - Apply
+
+variables:
+#  DOCKER_DRIVER: overlay2
+#  DOCKER_TLS_CERTDIR: ""
+#  DOCKER_HOST: tcp://docker:2375
+  REGISTRY: https://asia-southeast1-docker.pkg.dev/vin3s-devops-cvbt65435/registry-vin3s-hn
+  IMAGE_NAME: asia-southeast1-docker.pkg.dev/vin3s-devops-cvbt65435/registry-vin3s-hn/flatui-k8s
+  IMAGE_TAG: $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA
+
+#before_script:
+#  - docker info
+
+build-image:
+#  image: docker:latest
+  stage: Build
+  tags: 
+    - k8s
+  script:
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
+    - echo $PASS_REGISTRY | docker login -u _json_key --password-stdin  $REGISTRY
+    - docker push $IMAGE_NAME:$IMAGE_TAG
+#push-image:
+#  image: docker:latest
+#  stage: Push
+#  tags: 
+#    - k8s
+#  script:
+#    - docker login -u _json_key -p $PASS_REGISTRY  $REGISTRY
+#    - docker push $IMAGE_NAME:$IMAGE_TAG
+
+apply-image:
+  stage: Apply
+  tags: 
+    - k8s-runner
+  image: bitnami/kubectl:1.21
+  script:
+    - cp $KUBE_CONFIG $HOME/.kube/config
+    - cat $HOME/.kube/config
+    - kubectl set image deployment/flatui-k8s flatui-k8s=$IMAGE_NAME:$IMAGE_TAG -n dev 
