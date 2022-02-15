@@ -1,0 +1,51 @@
+image: quay.io/podman/stable:latest
+
+stages:
+  - Build
+  - Push
+  - Apply
+
+variables:
+#  REGISTRY: https://asia-southeast1-docker.pkg.dev/vin3s-devops-cvbt65435/registry-vin3s-hn
+  REGISTRY_NAME: asia-southeast1-docker.pkg.dev/vin3s-devops-cvbt65435/registry-vin3s-hn
+  IMAGE_NAME: asia-southeast1-docker.pkg.dev/vin3s-devops-cvbt65435/registry-vin3s-hn/flatui
+  IMAGE_TAG: $CI_COMMIT_BRANCH-$CI_COMMIT_SHORT_SHA
+  IMAGE: $IMAGE_NAME:$IMAGE_TAG
+  GIT_REPO: https://$USER_GIT:$PASS_GIT@gitlab.falsesight.asia/ngaihv1/helm-chart.git
+
+#before_script:
+#  - docker info
+
+build-image:
+#  image: docker:latest
+  stage: Build
+  tags: 
+    - k8s
+  script:
+    - podman build -t $IMAGE_NAME:$IMAGE_TAG .
+    - echo $PASS_REGISTRY | podman login -u _json_key --password-stdin  $REGISTRY_NAME
+    - podman push $IMAGE_NAME:$IMAGE_TAG
+#push-image:
+#  image: docker:latest
+#  stage: Push
+#  tags: 
+#    - k8s
+#  script:
+#    - docker login -u _json_key -p $PASS_REGISTRY  $REGISTRY
+#    - docker push $IMAGE_NAME:$IMAGE_TAG
+
+apply-image:
+  stage: Apply
+  tags: 
+    - k8s
+  image: bitnami/git:latest
+  script:
+    - git clone $GIT_REPO
+    - git config --global user.email "deploy@falsesight.asia"
+    - git config --global user.name "deploy"
+    - cd helm-chart/flatui
+    - sed -i 's|image:.*$|image:|' values.yaml
+    - sed -i "s|image:|& $IMAGE|" values.yaml    
+    - git add .
+    - git commit -m "image update $IMAGE_TAG"
+    - git push --repo $GIT_REPO
