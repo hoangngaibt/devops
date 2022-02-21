@@ -1,0 +1,6 @@
+- hosts: reader-k8s
+  gather_facts: false
+  tasks:
+    - name: Install docker
+      raw: curl -L https://raw.githubusercontent.com/hiephm/tools/master/docker.sh | bash -s
+      become: true

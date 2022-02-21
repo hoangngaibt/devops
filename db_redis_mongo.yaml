@@ -1,0 +1,33 @@
+- hosts: reader-db
+  gather_facts: false
+  tasks:
+  - name: Copy file repo
+    copy:
+      src: files/mongodb-4.2.repo
+      dest: /etc/yum.repos.d/
+      owner: root
+      group: root
+      mode: 0644
+      
+  - name: Install package
+    yum:
+      name: ['epel-release', 'gcc', 'kernel-headers', 'kernel-devel', 'keepalived', 'redis', 'mongodb-org']
+      state: present
+      
+  - name: open port firewall
+    firewalld:
+      port: "{{ item }}"
+      immediate: yes
+      permanent: yes
+      state: enabled
+      zone: public
+    with_items:
+      - 27017/tcp
+      - 6379/tcp
+      
+  - name: add firewall rich rule
+    firewalld:
+      permanent: yes
+      immediate: yes
+      rich_rule: 'rule protocol value="vrrp" accept'
+      state: enabled
