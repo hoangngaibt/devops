@@ -171,3 +171,5 @@ sed -i 's/image:.*$/image:/' test.yaml  # xóa từ pattern đến hết dòng
 sed -i 's/image:/& 0.3/' test.yaml  #thêm vào ngay sau pattern.
 
 2>&1 | sed "s/.*/$red&$default/"
+
+sed -i 's/\(^SELINUX=\).*/\SELINUX=disabled/' /etc/sysconfig/selinux
