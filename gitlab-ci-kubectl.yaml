@@ -36,6 +36,7 @@ build-image:
 #  script:
 #    - docker login -u _json_key -p $PASS_REGISTRY  $REGISTRY
 #    - docker push $IMAGE_NAME:$IMAGE_TAG
+#    - ssh -i ~/.ssh/id_rsa root@103.160.78.45 -p 1022 "hostnamectl && ls"
 
 apply-image:
   stage: Apply
