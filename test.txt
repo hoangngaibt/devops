@@ -3,3 +3,4 @@ test push when through proxy
 test push with deny upload files
 test push with deny upload files 2
 test push with deny upload files 03
+test push with deny upload files 04
