@@ -1,2 +1,3 @@
 test push to github
 test push when through proxy
+test push with deny upload files
