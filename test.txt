@@ -1,5 +1,5 @@
 test 01
-
+test git add tag and push
 test push to github
 test push when through proxy
 test push with deny upload files
