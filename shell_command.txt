@@ -173,3 +173,12 @@ sed -i 's/image:/& 0.3/' test.yaml  #thêm vào ngay sau pattern.
 2>&1 | sed "s/.*/$red&$default/"
 
 sed -i 's/\(^SELINUX=\).*/\SELINUX=disabled/' /etc/sysconfig/selinux
+
+// xóa đến cuối dòng;
+    - sed -i 's|image-$IMAGE:.*$|image-$IMAGE:|' values.yaml
+    - sed -i "s|image-$IMAGE:|& $IMAGE_NAME:$CI_COMMIT_TAG|" values.yaml 
+// get kube config trên rke
+kubectl --kubeconfig $(docker inspect kubelet --format '{{ range .Mounts }}{{ if eq .Destination "/etc/kubernetes" }}{{ .Source }}{{ end }}{{ end }}')/ssl/kubecfg-kube-node.yaml get configmap -n kube-system full-cluster-state -o json | jq -r .data.\"full-cluster-state\" | jq -r .currentState.certificatesBundle.\"kube-admin\".config | sed -e "/^[[:space:]]*server:/ s_:.*_: \"https://127.0.0.1:6443\"_" > kubeconfig_admin.yaml
+
+//reset passwd rancher
+kubectl -n cattle-system exec $(kubectl -n cattle-system get pods -l app=rancher | grep '1/1' | head -1 | awk '{ print $1 }') -- reset-password
