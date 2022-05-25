@@ -94,7 +94,11 @@ sudo du -sh --apparent-size /var
 sudo du -h /var/ | sort -rh | head -5
 
 sudo timedatectl set-timezone Asia/Ho_Chi_Minh
-
+/ubuntu
+apt install lsscsi
+//scan disk
+lsscsi
+echo 1 > /sys/class/scsi_device/0:0:1:0/device/rescan
 Extend disk:
 echo -e "d\n 3\n n\n 3\n \n \n N\n w\n"| sudo fdisk -c /dev/sda
 hoặc
@@ -107,6 +111,8 @@ default
 N(No want to remove the signature)
 w
 
+// grows file system
+xfs_growfs /dev/sda3
 ps -ef | egrep '(httpd|apache2|apache)' | grep -v `whoami` | grep -v root | head -n1 | awk '{print $1}'
 
 ps aux | grep -v root | grep apache | cut -d\  -f1 | sort | uniq
