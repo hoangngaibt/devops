@@ -188,3 +188,7 @@ kubectl --kubeconfig $(docker inspect kubelet --format '{{ range .Mounts }}{{ if
 
 //reset passwd rancher
 kubectl -n cattle-system exec $(kubectl -n cattle-system get pods -l app=rancher | grep '1/1' | head -1 | awk '{ print $1 }') -- reset-password
+
+//không hỏi xác thực host ssh, thêm vào .ssh/config
+Host *
+StrictHostKeyChecking no
