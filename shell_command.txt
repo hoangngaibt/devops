@@ -192,3 +192,6 @@ kubectl -n cattle-system exec $(kubectl -n cattle-system get pods -l app=rancher
 //không hỏi xác thực host ssh, thêm vào .ssh/config
 Host *
 StrictHostKeyChecking no
+
+// check balloon trên VMware
+vmware-toolbox-cmd stat balloon
