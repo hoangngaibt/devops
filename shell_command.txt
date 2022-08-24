@@ -195,3 +195,6 @@ StrictHostKeyChecking no
 
 // check balloon trên VMware
 vmware-toolbox-cmd stat balloon
+
+// check service running listen on port
+netstat -anpe | grep "80" | grep "LISTEN"
