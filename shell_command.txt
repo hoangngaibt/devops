@@ -224,3 +224,6 @@ rm -rf /etc/ceph \
        /var/log/kube-audit \
        /var/log/pods \
        /var/run/calico
+
+
+ kubectl run curl-from-cluster -it --rm --image=pstauffer/curl --restart=Never -- curl -svk https://kubernetes.default/api/
