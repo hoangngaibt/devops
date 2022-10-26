@@ -236,3 +236,6 @@ do
   echo "Value: $rec_column4"
   echo ""
 done < <(tail -n +2 input.csv)
+
+lscpu   # show cpu
+chcpu -e 6-11  ## enable cpu 6 đến 11
