@@ -239,3 +239,6 @@ done < <(tail -n +2 input.csv)
 
 lscpu   # show cpu
 chcpu -e 6-11  ## enable cpu 6 đến 11
+
+curl -X POST --data-urlencode "payload={\"channel\": \"#notification\", \"username\": \"Redis\", \"text\": \"This is posted to #notification and comes from a bot named webhookbot.\", \"icon_emoji\": \":warning:\"}" https://hooks.slack.com/services/T03GKOPPOJN5N0/B04HKDJHD/oLoiAeffkfksfjsnjh
+
