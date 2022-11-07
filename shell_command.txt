@@ -242,3 +242,6 @@ chcpu -e 6-11  ## enable cpu 6 đến 11
 
 curl -X POST --data-urlencode "payload={\"channel\": \"#notification\", \"username\": \"Redis\", \"text\": \"This is posted to #notification and comes from a bot named webhookbot.\", \"icon_emoji\": \":warning:\"}" https://hooks.slack.com/services/T03GKOPPOJN5N0/B04HKDJHD/oLoiAeffkfksfjsnjh
 
+echo "$(date) Cleaning up wal: $(find /opt/postgres_archive -type f -not -name "basebackup-*" -ctime +1 | wc -l) files..."
+find /opt/postgres_archive -type f -not -name "basebackup-*" -ctime +1 -delete
+echo "$(date) Done."
