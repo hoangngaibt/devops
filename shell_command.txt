@@ -97,7 +97,7 @@ sudo timedatectl set-timezone Asia/Ho_Chi_Minh
 /ubuntu
 apt install lsscsi
 //scan disk
-lsscsi
+lsscsi  hoặc "ls /sys/class/scsi_device"
 echo 1 > /sys/class/scsi_device/0:0:1:0/device/rescan
 Extend disk:
 echo -e "d\n 3\n n\n 3\n \n \n N\n w\n"| sudo fdisk -c /dev/sda
@@ -111,8 +111,15 @@ default
 N(No want to remove the signature)
 w
 
+// check type disk
+blkid
+
 // grows file system
 xfs_growfs /dev/sda3
+
+// grows ext4
+resize2fs /dev/sda3
+
 ps -ef | egrep '(httpd|apache2|apache)' | grep -v `whoami` | grep -v root | head -n1 | awk '{print $1}'
 
 ps aux | grep -v root | grep apache | cut -d\  -f1 | sort | uniq
