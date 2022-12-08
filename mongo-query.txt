@@ -1,0 +1,7 @@
+// mongo shell
+mongo 
+
+//show dbs
+show dbs
+
+//dump dbsmongodump --host=10.2.8.78 --username=admin --db=prod --password='**********' --authenticationDatabase=admin --gzip --out=/tmp/dbbackup

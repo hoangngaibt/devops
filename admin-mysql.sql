@@ -99,8 +99,22 @@ SOURCE_LOG_FILE='binlog.000005',
 SOURCE_LOG_POS=157;
 
 START SLAVE;
-
+show replica status\G
 SHOW SLAVE STATUS\G
 //
 ALTER USER 'replica'@'%' IDENTIFIED WITH mysql_native_password BY '************************!';
 flush privileges;
+
+mysqldump -u root --all-databases > reader.sql
+mysql -u root < reader.sql
+
+Select user from mysql.user; 
+ 
+ALTER USER 'replication_user'@'%' IDENTIFIED BY '**********************';
+
+CREATE USER 'backup'@'%' IDENTIFIED BY '************************';
+GRANT SELECT, BACKUP_ADMIN, RELOAD, PROCESS, SUPER, REPLICATION CLIENT ON *.* 
+    TO `backup`@`%`;
+GRANT CREATE, INSERT, DROP, UPDATE ON mysql.backup_progress TO 'backup'@'%'; 
+GRANT CREATE, INSERT, DROP, UPDATE, SELECT, ALTER ON mysql.backup_history 
+    TO 'backup'@'%';
