@@ -1,0 +1,33 @@
+            - script: |
+                cd Alopecia-Module
+                branch=`git branch -r --contains $(Build.SourceBranchName)`
+                echo "Tag found in branch $branch"
+                if [[ $branch =~ master ]]; then
+                  echo "Tag is from the correct branch. Continue..."
+                  if [[ $(Build.SourceBranchName) =~ ^[0-9]+\.[0-9]+\.[0-9]+-(prod|hotfix)$ ]]; then
+                    echo "Tag is valid. Continue..."
+                  else
+                    echo "Tag is invalid. Pipeline will exit."
+                    echo "##vso[task.complete result=Failed;]"
+                  fi
+                else
+                  echo "Tag is not from the correct branch. Production pipeline only run with tags from master branch. Pipeline will exit."
+                  echo "##vso[task.complete result=Failed;]"
+                fi
+              displayName: "Check tag format and origin"
+            - script: |
+                if [[ $(Build.SourceBranchName) =~ hotfix ]]; then  
+                  echo "Hotfix tag detected. New images will be built with hotfix tag."
+                  committag=$(Build.SourceBranchName)
+                  newbuild=true
+                  echo "##vso[task.setvariable variable=SemanticVersion]$committag"
+                  echo "##vso[task.setvariable variable=NewBuild]$newbuild"
+                else
+                  echo "Prod tag detected. Image build will be skipped."
+                  committag=$(Build.SourceBranchName)
+                  semver=${committag%%-*}
+                  newbuild=false
+                  echo "##vso[task.setvariable variable=SemanticVersion]$semver"
+                  echo "##vso[task.setvariable variable=NewBuild]$newbuild"
+                fi
+              displayName: "Get semantic version from tag"
