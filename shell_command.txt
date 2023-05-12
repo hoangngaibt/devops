@@ -252,3 +252,6 @@ curl -X POST --data-urlencode "payload={\"channel\": \"#notification\", \"userna
 echo "$(date) Cleaning up wal: $(find /opt/postgres_archive -type f -not -name "basebackup-*" -ctime +1 | wc -l) files..."
 find /opt/postgres_archive -type f -not -name "basebackup-*" -ctime +1 -delete
 echo "$(date) Done."
+
+#delete evicted pods
+kubectl get pod -n studytonight | grep Evicted | awk '{print $1}' | xargs kubectl delete pod -n studytonight
