@@ -120,6 +120,12 @@ xfs_growfs /dev/sda3
 // grows ext4
 resize2fs /dev/sda3
 
+// add new disk
+pvcreate /dev/vdb
+vgcreate vg-data /dev/vdb
+lvcreate --name lv-data -l 100%FREE vg-data
+mkfs.xfs /dev/vg-data/lv-data
+
 ps -ef | egrep '(httpd|apache2|apache)' | grep -v `whoami` | grep -v root | head -n1 | awk '{print $1}'
 
 ps aux | grep -v root | grep apache | cut -d\  -f1 | sort | uniq
@@ -192,6 +198,9 @@ sed -i 's/\(^SELINUX=\).*/\SELINUX=disabled/' /etc/sysconfig/selinux
 // xóa đến cuối dòng;
     - sed -i 's|image-$IMAGE:.*$|image-$IMAGE:|' values.yaml
     - sed -i "s|image-$IMAGE:|& $IMAGE_NAME:$CI_COMMIT_TAG|" values.yaml 
+#show giữa 2 pattern trên cùng 1 dòng là gì 
+jq '.DATABASE_URL' ./dev-secret/$File_Name_Dev.json | sed -e 's/password=/\n/g; s/[^\n]*\n//; s/\;database=[^\n]*\n//g; s/\;database=.*$//'
+
 // get kube config trên rke
 kubectl --kubeconfig $(docker inspect kubelet --format '{{ range .Mounts }}{{ if eq .Destination "/etc/kubernetes" }}{{ .Source }}{{ end }}{{ end }}')/ssl/kubecfg-kube-node.yaml get configmap -n kube-system full-cluster-state -o json | jq -r .data.\"full-cluster-state\" | jq -r .currentState.certificatesBundle.\"kube-admin\".config | sed -e "/^[[:space:]]*server:/ s_:.*_: \"https://127.0.0.1:6443\"_" > kubeconfig_admin.yaml
 
@@ -253,5 +262,56 @@ echo "$(date) Cleaning up wal: $(find /opt/postgres_archive -type f -not -name "
 find /opt/postgres_archive -type f -not -name "basebackup-*" -ctime +1 -delete
 echo "$(date) Done."
 
-#delete evicted pods
+
+#delete pods evicted
 kubectl get pod -n studytonight | grep Evicted | awk '{print $1}' | xargs kubectl delete pod -n studytonight
+
+#delete pods completed
+kubectl delete pods --field-selector=status.phase=Succeeded -n airflow
+
+#read speed test:
+hdparm -tv --direct /dev/sda
+hdparm --offset 20 -T /dev/sda  #To obtain cached reads
+
+apt-get install fio
+cd <folder to test>
+# Random Read/Write Operation Test (75% read/25% write)
+fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=fiotest --filename=testfio --bs=4k --iodepth=64 --size=1G --readwrite=randrw --rwmixread=75
+ 
+# Read only
+fio --randrepeat=1 --ioengine=libaio --direct=1 --gtod_reduce=1 --name=fiotest --filename=testfio --bs=4k --iodepth=64 --size=1G --readwrite=randread
+
+#Delete Folder Older Than X Days (Ex: +10 <=> 10 days)
+find /path/to/base/dir/* -type d -ctime +10 -exec rm -rf {} \;
+
+https://raw.githubusercontent.com/angristan/openvpn-install/master/openvpn-install.sh
+
+#Check rke2 cert
+
+(
+curl  --cacert /var/lib/rancher/rke2/server/tls/kube-controller-manager/kube-controller-manager.crt \
+  https://127.0.0.1:10257/healthz >/dev/null 2>&1 \
+  && echo "[OK] Kube Controller probe" \
+  || echo "[FAIL] Kube Controller probe";
+
+curl --cacert /var/lib/rancher/rke2/server/tls/kube-scheduler/kube-scheduler.crt \
+  https://127.0.0.1:10259/healthz >/dev/null 2>&1  \
+  && echo "[OK] Scheduler probe" \
+  || echo "[FAIL] Scheduler probe";
+)
+
+export CRI_CONFIG_FILE=/var/lib/rancher/rke2/agent/etc/crictl.yaml
+export CONTAINERD_ADDRESS=unix:///run/k3s/containerd/containerd.sock
+export PATH=$PATH:/var/lib/rancher/rke2/bin
+
+#RKE2 rotate cert error:
+echo "Rotating kube-controller-manager certificate"
+rm /var/lib/rancher/rke2/server/tls/kube-controller-manager/kube-controller-manager.{crt,key}
+crictl rm -f $(crictl ps -q --name kube-controller-manager)
+ 
+echo "Rotating kube-scheduler certificate"
+rm /var/lib/rancher/rke2/server/tls/kube-scheduler/kube-scheduler.{crt,key}
+crictl rm -f $(crictl ps -q --name kube-scheduler)
+
+# RKE2 check expired cert
+find /var/lib/rancher/rke2/server/tls -name '*.crt' -not -name '*-ca.crt' -exec openssl x509 -in {} -text -noout \; | grep --color=auto 'Not After'

@@ -8,3 +8,6 @@ select pid as process_id,
        state,
        state_change
 from pg_stat_activity;
+
+// show max connection
+SHOW max_connections;

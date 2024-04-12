@@ -71,6 +71,12 @@ SELECT user,host, command FROM information_schema.processlist;
 SHOW GRANTS FOR <username>@<host>;
 SHOW GRANTS;
 
+REVOKE <privileges> ON <database>.<object> FROM '<user>'@'<host>';
+
+SHOW VARIABLES LIKE 'max_connections'; 
+show status where variable_name = 'threads_connected';
+#SHOW PROCESSLIST Statement
+SHOW FULL PROCESSLIST\G
 
 # To check the sizes of all of your databases
 SELECT table_schema AS "Database", 
@@ -118,3 +124,13 @@ GRANT SELECT, BACKUP_ADMIN, RELOAD, PROCESS, SUPER, REPLICATION CLIENT ON *.*
 GRANT CREATE, INSERT, DROP, UPDATE ON mysql.backup_progress TO 'backup'@'%'; 
 GRANT CREATE, INSERT, DROP, UPDATE, SELECT, ALTER ON mysql.backup_history 
     TO 'backup'@'%';
+	
+// dump DB
+mysqldump -u root --all-databases --max_allowed_packet=512M --add-drop-database --single-transaction --flush-logs --master-data=2 > all_databases.sql
+
+SHOW FULL PROCESSLIST\G
+
+SELECT COUNT(1) ConnectionCount,user
+FROM information_schema.processlist
+WHERE user <> 'system user'
+GROUP BY user;

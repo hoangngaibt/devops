@@ -9,7 +9,7 @@ if [[ -z "$1" ]] || [[ -z "$2" ]]; then
 fi
 
 SERVICE_ACCOUNT_NAME=$1
-NAMESPACE="$2"
+NAMESPACE=$2
 KUBECFG_FILE_NAME="kube/k8s-${SERVICE_ACCOUNT_NAME}-${NAMESPACE}-conf"
 TARGET_FOLDER="kube"
 
@@ -86,4 +86,4 @@ echo -e "\\nAll done! Test with:"
 echo "KUBECONFIG=${KUBECFG_FILE_NAME} kubectl get pods"
 echo "you should not have any permissions by default - you have just created the authentication part"
 echo "You will need to create RBAC permissions"
-KUBECONFIG=${KUBECFG_FILE_NAME} kubectl get pods
+# KUBECONFIG=${KUBECFG_FILE_NAME} kubectl get pods
